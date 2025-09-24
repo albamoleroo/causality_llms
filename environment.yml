@@ -1,0 +1,9 @@
+name: base
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - conda[version='>=24.9.2']
+  - mamba[version='>=1.5.9']
+  - pip
+prefix: /home/moleropa/miniforge3
