@@ -19,15 +19,14 @@ class SimpleModelSuggester:
     - suggest_confounders(variables: List[str], treatment: str, outcome: str) -> List[str]:
         Suggests the confounding factors that might influence the relationship between a treatment and an outcome, given a list of variables that have already been considered.
     """
-
-    def __init__(self, llm=None):
-        if llm is not None:
-            if llm == 'gpt-4':
-                self.llm = guidance.models.OpenAI('gpt-4')
-            elif isinstance(llm, guidance.models.Model):
-                self.llm = llm
-            else:
-                raise ValueError("llm must be either 'gpt-4' or a guidance model instance.")
+        # model_name="GPT-4o-2024-05-13"
+    def __init__(self, llm=None, model_name="gpt-4o-mini"):
+        if llm is None:
+            self.llm = guidance.models.OpenAI(model_name)
+        elif isinstance(llm, guidance.models.Model):
+            self.llm = llm
+        else:
+            raise ValueError("llm must be either a guidance model instance or None.")
 
     # new ver
     def suggest_pairwise_relationship(self, variable1: str, variable2: str):
@@ -95,14 +94,15 @@ class SimpleModelSuggester:
         return relationships
 
     # new ver
-    def suggest_confounders(self, variables: List[str], treatment: str, outcome: str) -> List[str]:
+    #  previously: We have already considered the following factors {variables}.  Please do not repeat them.
+    def suggest_confounders(self, variables: List[str], exposure: str, outcome: str) -> List[str]:
 
         """
-            Suggests potential confounding factors that might influence the relationship between the treatment and outcome variables.
+            Suggests potential confounding factors that might influence the relationship between the main exposure and outcome variables.
 
             Args:
                 variables (List[str]): A list of variables that have already been considered.
-                treatment (str): The name of the treatment variable.
+                exposure (str): The name of the exposure/treatment variable.
                 outcome (str): The name of the outcome variable.
 
             Returns:
@@ -115,11 +115,9 @@ class SimpleModelSuggester:
             lm += "You are a helpful assistant for causal reasoning."
 
         with user():
-            prompt_str = f"""What latent confounding factors might influence the relationship between {treatment} and {outcome}?
+            prompt_str = f"""What latent confounding factors might influence the relationship between {exposure} and {outcome}?
 
-            We have already considered the following factors {variables}.  Please do not repeat them.
-
-            List the confounding factors between {treatment} and {outcome} enclosing the name of each factor in <conf> </conf> tags.
+            From the available variables list {variables}, list the confounding factors between {exposure} and {outcome} enclosing the name of each factor in <conf> </conf> tags.
             """
             lm += cleandoc(prompt_str)
         with assistant():
@@ -129,3 +127,101 @@ class SimpleModelSuggester:
         latents_list = re.findall(r'<conf>(.*?)</conf>', latents)
 
         return latents_list
+    
+
+    
+    
+    def suggest_confounders_custom(self, variables: List[str], exposure: str, outcome: str) -> List[str]:
+
+        """
+            Identifies potential confounding factors from a given list of variables that might influence the relationship between the exposure and outcome variables.
+            Custom method created including the confounder definition in the prompt.
+
+            Args:
+                variables (List[str]): A list of available variables to consider as potential confounders.
+                exposure (str): The name of the exposure/treatment variable.
+                outcome (str): The name of the outcome variable.
+
+            Returns:
+                List[str]: A list of variables from the input list that are identified as potential confounding factors.
+            """
+
+        lm = self.llm
+
+        with system():
+            lm += "You are a helpful assistant for causal reasoning."
+
+        with user():
+            prompt_str = f"""Which variables from the following list might be confounding factors that influence the relationship between {exposure} and {outcome}?
+
+            Available variables: {variables}
+
+            A Confounding for the effect of exposure A on outcome Y is present when the association between A and Y is not entirely due to the causal effect of A on Y
+            Any study variable that fulfills these 3 criteria should be evaluated as a possible confounder.
+            
+            1) A confounder must be an extraneous risk factor for the disease outcome, a different factor from the main exposure under study.
+            2) A confounder must be associated with the exposure in the source population of the study participants. This association can be a direct effect of the confounder on the exposure or through the relation of a common cause variable that precedes both the exposure and the confounder.
+            3) A confounder must not be affected by the exposure or the disease outcome. In particular, a confounder cannot be an intermediate variable in the causal path between the exposure and the outcome.
+
+            From the available variables list {variables}, list the confounding factors between {exposure} and {outcome} enclosing the name of each factor in <conf> </conf> tags.
+            """
+            lm += cleandoc(prompt_str)
+        with assistant():
+            lm += gen("latents")
+
+        latents = lm['latents']
+        latents_list = re.findall(r'<conf>(.*?)</conf>', latents)
+
+        return latents_list
+    
+
+    def suggest_colliders_custom(self, factors, treatment, outcome):
+        """
+        Suggests factors that might be colliders between treatment and outcome.
+        
+        A collider is a variable that is caused by both the treatment and outcome.
+        Conditioning on colliders can introduce bias (collider bias or selection bias).
+        
+        Args:
+            factors (list): List of available factors to consider
+            treatment (str): Treatment/exposure variable
+            outcome (str): Outcome variable
+            
+        Returns:
+            list: Factors identified as potential colliders
+        """
+        lm = self.llm
+        with system():
+            lm += "You are a helpful assistant for causal reasoning."
+
+        with user():
+            prompt_str = f"""Which factors in {factors} might be colliders with respect to {treatment} and {outcome}?
+
+
+            CRITERIA for a variable to be a collider:
+            1. {treatment} → variable (treatment causes the variable)
+            2. {outcome} → variable (outcome causes the variable)  
+            3. BOTH causal arrows point INTO the variable (not away from it)
+
+            EXAMPLE of a TRUE collider:
+            - If treatment="smoking" and outcome="alcohol consumption"
+            - Possible collider: "liver disease" (because smoking → liver disease AND alcohol → liver disease)
+
+            Think step by step for each factor in {factors}:
+            1. Does {treatment} cause this factor?
+            2. Does {outcome} cause this factor?
+            3. If BOTH answers are YES, then it's a collider
+            4. If either answer is NO, then it's NOT a collider
+
+            From the available factors {factors}, identify which ones are TRUE colliders and list them enclosing the name of each factor in <collider> </collider> tags.
+            
+            If no true colliders exist among the factors, return an empty response.
+            """
+            lm += cleandoc(prompt_str)
+        with assistant():
+            lm += gen("colliders")
+
+        colliders = lm['colliders']
+        colliders_list = re.findall(r'<collider>(.*?)</collider>', colliders)
+
+        return colliders_list
