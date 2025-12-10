@@ -1,2 +1,2 @@
-total_pairs,ab_mean_accuracy,ba_mean_accuracy,joint_mean_accuracy,ab_perfect_count,ba_perfect_count,joint_perfect_count,ab_perfect_rate,ba_perfect_rate,joint_perfect_rate
-108,0.7796296296296296,0.7685185185185185,0.7740740740740739,76,66,45,0.7037037037037037,0.6111111111111112,0.4166666666666667
+total_pairs,ab_mean_accuracy,ba_mean_accuracy,joint_mean_accuracy,ab_mean_confidence,ba_mean_confidence,ab_mean_strength,ba_mean_strength,avg_latency_per_pair_seconds,avg_latency_per_query_seconds,total_execution_time_seconds
+1,1.0,1.0,1.0,0.95,,0.85,,4.2,2.1,4.2

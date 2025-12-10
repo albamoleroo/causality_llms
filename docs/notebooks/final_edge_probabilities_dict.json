@@ -1,0 +1,102 @@
+[
+  {
+    "cause": "bmi",
+    "effect": "systolic pressure",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "bmi",
+    "effect": "diastolic pressure",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "bmi",
+    "effect": "diabetes mellitus",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "bmi",
+    "effect": "major acute cardiovascular event",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "age",
+    "effect": "systolic pressure",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "age",
+    "effect": "diastolic pressure",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "diabetes mellitus",
+    "effect": "systolic pressure",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "diabetes mellitus",
+    "effect": "diastolic pressure",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "diabetes mellitus",
+    "effect": "major acute cardiovascular event",
+    "probability": 0.999999999999
+  },
+  {
+    "cause": "bmi",
+    "effect": "cardiac ischemia",
+    "probability": 0.6666666666663333
+  },
+  {
+    "cause": "age",
+    "effect": "bmi",
+    "probability": 0.45926004531983344
+  },
+  {
+    "cause": "age",
+    "effect": "cardiac ischemia",
+    "probability": 0.45926004531983344
+  },
+  {
+    "cause": "age",
+    "effect": "diabetes mellitus",
+    "probability": 0.45926004531983344
+  },
+  {
+    "cause": "age",
+    "effect": "major acute cardiovascular event",
+    "probability": 0.45926004531983344
+  },
+  {
+    "cause": "systolic pressure",
+    "effect": "major acute cardiovascular event",
+    "probability": 0.3333333333336667
+  },
+  {
+    "cause": "diastolic pressure",
+    "effect": "major acute cardiovascular event",
+    "probability": 0.3333333333336667
+  },
+  {
+    "cause": "cardiac ischemia",
+    "effect": "major acute cardiovascular event",
+    "probability": 0.3333333333336667
+  },
+  {
+    "cause": "systolic pressure",
+    "effect": "cardiac ischemia",
+    "probability": 9.999778782798785e-13
+  },
+  {
+    "cause": "diastolic pressure",
+    "effect": "cardiac ischemia",
+    "probability": 9.999778782798785e-13
+  },
+  {
+    "cause": "diabetes mellitus",
+    "effect": "cardiac ischemia",
+    "probability": 9.999778782798785e-13
+  }
+]
