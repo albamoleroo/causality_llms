@@ -96,6 +96,12 @@ class SimpleModelSuggester:
             if all_variables is not None:
                 other_vars = [v for v in all_variables if v not in [variable1, variable2]]
                 mediator_instruction = f"""variables that could act as mediators in this edge: {other_vars},
+
+                Example:
+                Variables: Exercise, Weight Loss
+                Potential mediators: Calorie Intake
+                Reasoning: Exercise can influence calorie intake, which in turn affects weight loss. Since the effect of exercise on weight loss may be explained through changes in calorie intake, the relationship is mediated by another variable.
+                Final answer: <answer>C</answer>
                 """
             else:
                 mediator_instruction = ""

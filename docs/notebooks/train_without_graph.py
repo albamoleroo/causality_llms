@@ -162,6 +162,7 @@ data_selected = data_df[gt_variables].copy()
 scaler_selected = StandardScaler()
 data_norm_selected = data_selected.copy()
 sel_continuous = [v for v in gt_variables if v in continuous_vars]
+
 if len(sel_continuous) > 0:
     sel_cont_indices = [gt_variables.index(v) for v in sel_continuous]
     data_norm_selected.iloc[:, sel_cont_indices] = scaler_selected.fit_transform(data_selected[sel_continuous])

@@ -164,7 +164,7 @@ class AugmentedModelSuggester(SimpleModelSuggester):
                 else:
                     response = result_data
                 
-                print("   ✓ LLM response generated with RAG augmentation")
+                print("   LLM response generated with RAG augmentation")
             else:
                 result_data = query_llm(variable1, variable2, **llm_kwargs)
                 
@@ -173,7 +173,7 @@ class AugmentedModelSuggester(SimpleModelSuggester):
                 else:
                     response = result_data
                 
-                print("   ⚠ LLM response generated without augmentation")
+                print("   LLM response generated without augmentation")
         else:
             # No external knowledge found, use LLM's internal knowledge
             result_data = query_llm(variable1, variable2, **llm_kwargs)
@@ -183,10 +183,10 @@ class AugmentedModelSuggester(SimpleModelSuggester):
             else:
                 response = result_data
             
-            print("   ℹ LLM response generated using internal knowledge only")
+            print("   LLM response generated using internal knowledge only")
         
         # Step 4: Parse response
-        print("\n📋 Step 4: Parsing result...")
+        print("\n Step 4: Parsing result...")
         
         # Convert AIMessage to string if needed
         response_text = response.content if hasattr(response, 'content') else str(response)
